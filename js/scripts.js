@@ -1,5 +1,4 @@
 const searchDiv = document.querySelector(".search-container");
-const galleryDiv = document.querySelector("#gallery");
 
 // Create search elements
 const searchForm = document.createElement("form");
@@ -45,23 +44,44 @@ function checkStatus(response) {
   }
 }
 
-function generateCard(image, first, last, email, city, state) {
+function generateCard(image, name, email, location) {
   const cardHTML = `
     <div class="card">
       <div class="card-img-container">
         <img class="card-img" src="${image}" alt="profile picture">
       </div>
       <div class="card-info-container">
-        <h3 id="name" class="card-name cap">${first} ${last}</h3>
+        <h3 id="name" class="card-name cap">${name}</h3>
         <p class="card-text">${email}</p>
-        <p class="card-text cap">${city}, ${state}</p>
+        <p class="card-text cap">${location}</p>
       </div>
     </div>
   `;
   return cardHTML;
 }
 
+function generateGallery(numbOfEmployees) {
+  const galleryDiv = document.querySelector("#gallery");
+  let cards;
+  fetchData(`https://randomuser.me/api/?results=${numbOfEmployees}`)
+    .then((data) => {
+      for (let i = 0; i < data.results.length; i++) {
+        const image = data.results[i].picture.large;
+        const name = `${data.results[i].name.first} ${data.results[i].name.last}`;
+        const email = data.results[i].email;
+        const location = `${data.results[i].location.city}, ${data.results[i].location.state}`;
+
+        cards += generateCard(image, name, email, location);
+      }
+      galleryDiv.innerHTML = cards;
+    })
+    .catch((error) =>
+      console.log("There was an error loading directory...", error)
+    );
+}
+
+generateGallery(12);
 // Get 12 Random Users from API
-fetchData("https://randomuser.me/api/?results=12").then((data) =>
-  console.log(data.results)
-);
+// fetchData("https://randomuser.me/api/?results=12").then((data) =>
+//   console.log(data.results[0].name.last)
+// );
