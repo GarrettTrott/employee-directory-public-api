@@ -24,4 +24,13 @@ searchDiv.appendChild(searchForm);
 searchForm.appendChild(searchInput);
 searchForm.appendChild(submitButton);
 
-// Hepler funtions
+// FETCH Functions
+function fetchData(url) {
+  return fetch(url)
+    .then((res) => res.json())
+    .catch((error) =>
+      console.log("Looks like there was in issue with your request...", error)
+    );
+}
+
+// Helper funtions
