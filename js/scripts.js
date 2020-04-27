@@ -1,4 +1,5 @@
 const searchDiv = document.querySelector(".search-container");
+const galleryDiv = document.querySelector("#gallery");
 
 // Create search elements
 const searchForm = document.createElement("form");
@@ -44,8 +45,21 @@ function checkStatus(response) {
   }
 }
 
-function generateCard()
-
+function generateCard(image, first, last, email, city, state) {
+  const cardHTML = `
+    <div class="card">
+      <div class="card-img-container">
+        <img class="card-img" src="${image}" alt="profile picture">
+      </div>
+      <div class="card-info-container">
+        <h3 id="name" class="card-name cap">${first} ${last}</h3>
+        <p class="card-text">${email}</p>
+        <p class="card-text cap">${city}, ${state}</p>
+      </div>
+    </div>
+  `;
+  return cardHTML;
+}
 
 // Get 12 Random Users from API
 fetchData("https://randomuser.me/api/?results=12").then((data) =>
