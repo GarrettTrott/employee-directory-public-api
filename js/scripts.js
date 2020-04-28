@@ -46,8 +46,9 @@ function generateCard(image, name, email, location) {
 
 function generateGallery(numbOfEmployees) {
   let cards = "";
-  fetchData(`https://randomuser.me/api/?results=${numbOfEmployees}`)
+  fetchData(`https://randomuser.me/api/?nat=us&results=${numbOfEmployees}`)
     .then((data) => {
+      console.log(data);
       for (let i = 0; i < data.results.length; i++) {
         const employee = {
           image: data.results[i].picture.large,
