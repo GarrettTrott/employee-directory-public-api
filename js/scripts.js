@@ -43,7 +43,7 @@ function generateCard(image, name, email, location) {
   `;
   return cardHTML;
 }
-
+// function that pulls 12 random US employees
 function generateGallery(numbOfEmployees) {
   let cards = "";
   fetchData(`https://randomuser.me/api/?nat=us&results=${numbOfEmployees}`)
