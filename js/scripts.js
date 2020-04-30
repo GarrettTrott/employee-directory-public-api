@@ -27,8 +27,20 @@ function checkStatus(response) {
   }
 }
 
+//Turns API DOB string to date string *ex: 02/22/12
+function dobToDate(dob) {
+  const strArray = dob.split("");
+
+  const year = strArray.slice(0, 4).join("");
+  const month = strArray.slice(5, 7).join("");
+  const day = strArray.slice(8, 10).join("");
+
+  const date = [month, "/", day, "/", year].flat().join("");
+  return date;
+}
+
 // generates employee card markup
-function generateCard(image, name, email, location) {
+function generateCard(image, name, email, cityState) {
   const cardHTML = `
     <div class="card">
       <div class="card-img-container">
@@ -37,12 +49,16 @@ function generateCard(image, name, email, location) {
       <div class="card-info-container">
         <h3 id="name" class="card-name cap">${name}</h3>
         <p class="card-text">${email}</p>
-        <p class="card-text cap">${location}</p>
+        <p class="card-text cap">${cityState}</p>
       </div>
     </div>  
   `;
   return cardHTML;
 }
+
+//function that generates the
+function generateModal() {}
+
 // function that pulls 12 random US employees
 function generateGallery(numbOfEmployees) {
   let cards = "";
@@ -54,8 +70,13 @@ function generateGallery(numbOfEmployees) {
           image: data.results[i].picture.large,
           name: `${data.results[i].name.first} ${data.results[i].name.last}`,
           email: data.results[i].email,
-          location: `${data.results[i].location.city}, ${data.results[i].location.state}`,
+          cityState: `${data.results[i].location.city}, ${data.results[i].location.state}`,
+          phone: data.results[i].phone,
+          street: `${data.results[i].location.street.number} ${data.results[i].location.street.name}`,
+          zip: data.results[i].location.postcode,
+          birthday: dobToDate(data.results[i].dob.date),
         };
+
         cards += generateCard(
           employee.image,
           employee.name,
@@ -71,3 +92,15 @@ function generateGallery(numbOfEmployees) {
 }
 
 generateGallery(12);
+
+// Event handlers
+
+const employeeCards = document.querySelectorAll(".card");
+const searchInput = document.querySelector("#search-input");
+const searchButton = document.querySelector("#search-submit");
+
+employeeCards.addEventListener("click", (e) => {});
+
+searchButton.addEventListener("click", (e) => {});
+
+searchInput.addEventListener("keyup", () => {});
