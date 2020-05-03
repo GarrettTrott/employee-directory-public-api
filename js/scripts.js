@@ -1,4 +1,5 @@
 let directory = null;
+const directorySize = 12;
 const searchDiv = document.querySelector(".search-container");
 const galleryDiv = document.querySelector("#gallery");
 
@@ -61,65 +62,62 @@ function dobToDate(dob) {
   const date = [month, "/", day, "/", year].flat().join("");
   return date;
 }
-
-// generates employee card markup
-function generateCard(image, name, email, cityState) {
-  const cardHTML = `
-    <div class="card">
-      <div class="card-img-container">
-        <img class="card-img" src="${image}" alt="profile picture">
-      </div>
-      <div class="card-info-container">
-        <h3 id="name" class="card-name cap">${name}</h3>
-        <p class="card-text">${email}</p>
-        <p class="card-text cap">${cityState}</p>
-      </div>
-    </div>  
-  `;
-  return cardHTML;
-}
-
 // function that pulls 12 random US employees
 function generateGallery(directory) {
   let cards = "";
   directory.forEach((employee) => {
-    cards += generateCard(
-      employee.image,
-      employee.name,
-      employee.email,
-      employee.cityState
-    );
+    cards += `
+    <div class="card">
+      <div class="card-img-container">
+        <img class="card-img" src="${employee.image}" alt="profile picture">
+      </div>
+      <div class="card-info-container">
+        <h3 id="name" class="card-name cap">${employee.name}</h3>
+        <p class="card-text">${employee.email}</p>
+        <p class="card-text cap">${employee.cityState}</p>
+      </div>
+    </div>  
+  `;
   });
   galleryDiv.innerHTML = cards;
 }
 
 //function that generates modal markup
 function generateModal(index) {
+  const modalContainer = document.createElement("div");
+  modalContainer.classList.add("modal-container");
+
   const modalHTML = `
-  <div class="modal-container">
-    <div class="modal">
-      <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
-      <div class="modal-info-container">
-        <img class="modal-img" src="${directory.results[index].picture.large}" alt="profile picture">
-        <h3 id="name" class="modal-name cap">name</h3>
-        <p class="modal-text">email</p>
-        <p class="modal-text cap">city</p>
-        <hr>
-        <p class="modal-text">(555) 555-5555</p>
-        <p class="modal-text">123 Portland Ave., Portland, OR 97204</p>
-        <p class="modal-text">Birthday: 10/21/2015</p>
-      </div>
-    </div>
-    <div class="modal-btn-container">
-      <button type="button" id="modal-prev" class="modal-prev btn">Prev</button>
-      <button type="button" id="modal-next" class="modal-next btn">Next</button>
+  <div class="modal">
+    <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
+    <div class="modal-info-container">
+      <img class="modal-img" src="${directory[index].image}" alt="profile picture">
+      <h3 id="name" class="modal-name cap">${directory[index].name}</h3>
+      <p class="modal-text">${directory[index].email}</p>
+      <p class="modal-text cap">${directory[index].cityState}</p>
+      <hr>
+      <p class="modal-text">${directory[index].phone}</p>
+      <p class="modal-text">${directory[index].street}</p>
+      <p class="modal-text">${directory[index].birthday}</p>
     </div>
   </div>
+  <div class="modal-btn-container">
+    <button type="button" id="modal-prev" class="modal-prev btn">Prev</button>
+    <button type="button" id="modal-next" class="modal-next btn">Next</button>
+  </div>
   `;
-  return modalHTML;
+
+  modalContainer.innerHTML = modalHTML;
+  galleryDiv.insertAdjacentElement("afterend", modalContainer);
+
+  const modalClose = document.querySelector("#modal-close-btn");
+
+  modalClose.addEventListener("click", () => {
+    modalContainer.remove();
+  });
 }
 
-fetchData(`https://randomuser.me/api/?nat=us&results=12`)
+fetchData(`https://randomuser.me/api/?nat=us&results=${directorySize}`)
   .then((data) => createDirectory(data))
   .then((directory) => generateGallery(directory))
   .catch((error) =>
@@ -128,12 +126,23 @@ fetchData(`https://randomuser.me/api/?nat=us&results=12`)
 
 // Event handlers
 
-const employeeCards = document.querySelector("#gallery");
 const searchInput = document.querySelector("#search-input");
 const searchButton = document.querySelector("#search-submit");
-
-employeeCards.addEventListener("click", (e) => {});
+const employeeCards = document.querySelector("#gallery");
 
 searchButton.addEventListener("click", (e) => {});
 
 searchInput.addEventListener("keyup", () => {});
+
+employeeCards.addEventListener("click", (e) => {
+  const cards = document.querySelectorAll(".card");
+  for (let i = 0; i < directory.length; i++) {
+    if (
+      e.target === cards[i] ||
+      e.target.parentNode === cards[i] ||
+      e.target.parentNode.parentNode === cards[i]
+    ) {
+      generateModal(i);
+    }
+  }
+});
