@@ -2,15 +2,37 @@ let directory = null;
 const directorySize = 12;
 const searchDiv = document.querySelector(".search-container");
 const galleryDiv = document.querySelector("#gallery");
-const noResults = document.createElement("H2");
+const noResults = document.createElement("h3");
+
 noResults.textContent = "No Search Results....";
+noResults.style.display = "none";
 
 searchDiv.innerHTML = `
-<form action="#" method="get">
-<input type="search" id="search-input" class="search-input" placeholder="Search...">
-<input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
-</form>
+  <form action="#" method="get">
+    <input type="search" id="search-input" class="search-input" placeholder="Search...">
+    <input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
+  </form>
 `;
+
+function searchNames(input) {
+  const galleryNames = document.querySelectorAll(".card-name");
+  let searchResults = [];
+  noResults.style.display = "none";
+
+  galleryNames.forEach((name) => {
+    if (
+      name.textContent.toLowerCase().indexOf(input.value.toLowerCase()) > -1
+    ) {
+      name.parentNode.parentNode.style.display = "";
+      searchResults.push(name.textContent);
+    } else {
+      name.parentNode.parentNode.style.display = "none";
+    }
+    if (searchResults.length === 0) {
+      noResults.style.display = "";
+    }
+  });
+}
 
 // FETCH Functions
 function fetchData(url) {
@@ -41,7 +63,8 @@ function createDirectory(data) {
       image: employee.picture.large,
       name: `${employee.name.first} ${employee.name.last}`,
       email: employee.email,
-      cityState: `${employee.location.city}, ${employee.location.state}`,
+      city: employee.location.city,
+      state: employee.location.state,
       phone: employee.phone,
       street: `${employee.location.street.number} ${employee.location.street.name}`,
       zip: employee.location.postcode,
@@ -49,7 +72,6 @@ function createDirectory(data) {
     };
     employeeArray.push(person);
   });
-  directory = employeeArray;
   return employeeArray;
 }
 
@@ -68,18 +90,19 @@ function generateGallery(directory) {
   directory.forEach((employee) => {
     cards += `
     <div class="card">
-    <div class="card-img-container">
-    <img class="card-img" src="${employee.image}" alt="profile picture">
-    </div>
-    <div class="card-info-container">
-    <h3 id="name" class="card-name cap">${employee.name}</h3>
-    <p class="card-text">${employee.email}</p>
-    <p class="card-text cap">${employee.cityState}</p>
-    </div>
+      <div class="card-img-container">
+        <img class="card-img" src="${employee.image}" alt="profile picture">
+      </div>
+      <div class="card-info-container">
+        <h3 id="name" class="card-name cap">${employee.name}</h3>
+        <p class="card-text">${employee.email}</p>
+      <p class="card-text cap">${employee.city}</p>
+      </div>
     </div>  
     `;
   });
   galleryDiv.innerHTML = cards;
+  galleryDiv.appendChild(noResults);
 }
 
 //function that generates modal markup
@@ -89,21 +112,21 @@ function generateModal(index) {
 
   const modalHTML = `
   <div class="modal">
-  <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
-  <div class="modal-info-container">
-  <img class="modal-img" src="${directory[index].image}" alt="profile picture">
-  <h3 id="name" class="modal-name cap">${directory[index].name}</h3>
-  <p class="modal-text">${directory[index].email}</p>
-  <p class="modal-text cap">${directory[index].cityState}</p>
-  <hr>
-  <p class="modal-text">${directory[index].phone}</p>
-  <p class="modal-text">${directory[index].street}</p>
-  <p class="modal-text">${directory[index].birthday}</p>
-  </div>
+    <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
+    <div class="modal-info-container">
+      <img class="modal-img" src="${directory[index].image}" alt="profile picture">
+      <h3 id="name" class="modal-name cap">${directory[index].name}</h3>
+      <p class="modal-text">${directory[index].email}</p>
+      <p class="modal-text cap">${directory[index].city}</p>
+    <hr>
+      <p class="modal-text">${directory[index].phone}</p>
+      <p class="modal-text">${directory[index].street}, ${directory[index].state} ${directory[index].zip}</p>
+      <p class="modal-text">Birthday: ${directory[index].birthday}</p>
+    </div>
   </div>
   <div class="modal-btn-container">
-  <button type="button" id="modal-prev" class="modal-prev btn">Prev</button>
-  <button type="button" id="modal-next" class="modal-next btn">Next</button>
+    <button type="button" id="modal-prev" class="modal-prev btn">Prev</button>
+    <button type="button" id="modal-next" class="modal-next btn">Next</button>
   </div>
   `;
 
@@ -138,7 +161,7 @@ function generateModal(index) {
 }
 
 fetchData(`https://randomuser.me/api/?nat=us&results=${directorySize}`)
-  .then((data) => createDirectory(data))
+  .then((data) => (directory = createDirectory(data)))
   .then((directory) => generateGallery(directory))
   .catch((error) =>
     console.log("There was an error loading directory...", error)
@@ -148,11 +171,15 @@ fetchData(`https://randomuser.me/api/?nat=us&results=${directorySize}`)
 const searchInput = document.querySelector("#search-input");
 const searchButton = document.querySelector("#search-submit");
 
-searchButton.addEventListener("click", (e) => {});
+searchButton.addEventListener("click", (e) => {
+  searchNames(searchInput);
+});
 
-searchInput.addEventListener("keyup", () => {});
+searchInput.addEventListener("keyup", (e) => {
+  searchNames(searchInput);
+});
 
-// When
+// When employee card is clicked generate modal
 galleryDiv.addEventListener("click", (e) => {
   const cards = document.querySelectorAll(".card");
   for (let i = 0; i < directory.length; i++) {
