@@ -23,15 +23,15 @@ function searchNames(input) {
     if (
       name.textContent.toLowerCase().indexOf(input.value.toLowerCase()) > -1
     ) {
-      name.parentNode.parentNode.style.display = "";
       searchResults.push(name.textContent);
+      name.parentNode.parentNode.style.display = "";
     } else {
       name.parentNode.parentNode.style.display = "none";
     }
-    if (searchResults.length === 0) {
-      noResults.style.display = "";
-    }
   });
+  if (searchResults.length === 0) {
+    noResults.style.display = "";
+  }
 }
 
 // FETCH Functions
