@@ -1,6 +1,6 @@
 # Startup Employee Directory - Public API Requests
 
-A website that generates a random directory of 12 people from the Random User Generator API
+A website that generates a random directory of 12 people from the "Random User Generator API".
 
 ### Installing
 

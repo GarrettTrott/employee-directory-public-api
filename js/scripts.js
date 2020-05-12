@@ -3,11 +3,11 @@ const directorySize = 12;
 
 const searchDiv = document.querySelector(".search-container");
 searchDiv.innerHTML = `
-  <form action="#" method="get">
-    <input type="search" id="search-input" class="search-input" placeholder="Search...">
-    <input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
-  </form>
-  `;
+<form action="#" method="get">
+<input type="search" id="search-input" class="search-input" placeholder="Search...">
+<input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
+</form>
+`;
 const searchButton = document.querySelector("#search-submit");
 const searchInput = document.querySelector("#search-input");
 
@@ -39,6 +39,26 @@ function searchNames(input) {
   if (searchResults.length === 0) {
     noResults.style.display = "";
   }
+}
+
+function searchedModals() {
+  let filteredModals = [];
+  const modals = document.querySelectorAll(".modal");
+  const searchedCards = document.querySelectorAll(
+    "div.card:not([style='display: none;'])"
+  );
+
+  for (let i = 0; i < searchedCards.length; i++) {
+    for (let x = 0; x < modals.length; x++) {
+      if (
+        searchedCards[i].lastElementChild.firstElementChild.textContent ===
+        modals[x].lastElementChild.children[1].textContent
+      ) {
+        filteredModals.push(modals[x]);
+      }
+    }
+  }
+  return filteredModals;
 }
 
 // FETCH Functions
@@ -141,6 +161,23 @@ function generateModals(directory) {
   modalContainer.innerHTML = modals;
 }
 
+function hideModals() {
+  const modals = document.querySelectorAll(".modal");
+  modals.forEach((modal) => {
+    modal.style.display = "none";
+  });
+  modalContainer.style.display = "none";
+}
+
+function findCurrentModalIndex() {
+  const filteredModals = searchedModals();
+  const currentModal = document.querySelector(
+    ".modal:not([style='display: none;'])"
+  );
+  const index = filteredModals.findIndex((modal) => modal === currentModal);
+  return index;
+}
+
 fetchData(`https://randomuser.me/api/?nat=us&results=${directorySize}`)
   .then((data) => (directory = createDirectory(data)))
   .then((directory) => generateGallery(directory))
@@ -161,52 +198,42 @@ searchInput.addEventListener("keyup", (e) => {
 
 //When employee card is clicked generate modal
 galleryDiv.addEventListener("click", (e) => {
-  let selectedName = "";
   const modals = document.querySelectorAll(".modal");
   const cards = document.querySelectorAll(".card");
-
-  console.log(e.target);
-  cards.forEach((employee) => {
-    if (e.target.className === "card") {
-      selectedName = e.target.lastChild.firstChild.textContent;
-      console.log(selectedName);
-    } else if (e.target.className === "card-img-container") {
-      selectedName = e.target.nextChild.firstChild.textContent;
+  hideModals();
+  for (let i = 0; i < cards.length; i++) {
+    if (
+      e.target === cards[i] ||
+      e.target.parentNode === cards[i] ||
+      e.target.parentNode.parentNode === cards[i]
+    ) {
+      modals[i].style.display = "";
+      modalContainer.style.display = "";
     }
-  });
-
-  modals.forEach((employee) => {});
-});
-
-modalContainer.addEventListener("click", (e) => {
-  const modals = document.querySelectorAll(".modal");
-  if (e.target.textContent === "X") {
-    modals.forEach((modal) => {
-      modal.style.display = "none";
-    });
-    modalContainer.style.display = "none";
-  } else if (e.target.textContent === "Prev") {
-    console.log("prev");
-  } else if (e.target.textContent === "Next") {
-    console.log("next");
   }
 });
 
-// modalButtons.addEventListener("click", (e) => {
-//   let currentIndex = index;
-//     if (e.target.textContent === "Prev") {
-//       modalContainer.remove();
-//       if (currentIndex === 0) {
-//         generateModal(directorySize - 1);
-//       } else if (currentIndex <= directorySize - 1) {
-//         generateModal(currentIndex - 1);
-//       }
-//     } else if (e.target.textContent === "Next") {
-//       modalContainer.remove();
-//       if (currentIndex === directorySize - 1) {
-//         generateModal(0);
-//       } else if (currentIndex <= directorySize - 1) {
-//         generateModal(currentIndex + 1);
-//       }
-//   }
-// });
+modalContainer.addEventListener("click", (e) => {
+  const filteredModals = searchedModals();
+  const currentModalIndex = findCurrentModalIndex();
+
+  if (e.target.textContent === "X") {
+    hideModals();
+  } else if (e.target.textContent === "Prev") {
+    if (currentModalIndex > filteredModals.length - 1) {
+      filteredModals[currentModalIndex].style.display = "none";
+      filteredModals[currentModalIndex - 1].style.display = "";
+    } else if (currentModalIndex === 0) {
+      filteredModals[currentModalIndex].style.display = "none";
+      filteredModals[filteredModals.length - 1].style.display = "";
+    }
+  } else if (e.target.textContent === "Next") {
+    if (currentModalIndex < filteredModals.length - 1) {
+      filteredModals[currentModalIndex].style.display = "none";
+      filteredModals[currentModalIndex + 1].style.display = "";
+    } else if (currentModalIndex === filteredModals.length - 1) {
+      filteredModals[currentModalIndex].style.display = "none";
+      filteredModals[0].style.display = "";
+    }
+  }
+});
