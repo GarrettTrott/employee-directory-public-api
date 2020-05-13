@@ -220,12 +220,12 @@ modalContainer.addEventListener("click", (e) => {
   if (e.target.textContent === "X") {
     hideModals();
   } else if (e.target.textContent === "Prev") {
-    if (currentModalIndex > filteredModals.length - 1) {
+    if (currentModalIndex === 0) {
+      filteredModals[0].style.display = "none";
+      filteredModals[filteredModals.length - 1].style.display = "";
+    } else if (currentModalIndex <= filteredModals.length - 1) {
       filteredModals[currentModalIndex].style.display = "none";
       filteredModals[currentModalIndex - 1].style.display = "";
-    } else if (currentModalIndex === 0) {
-      filteredModals[currentModalIndex].style.display = "none";
-      filteredModals[filteredModals.length - 1].style.display = "";
     }
   } else if (e.target.textContent === "Next") {
     if (currentModalIndex < filteredModals.length - 1) {
