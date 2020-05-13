@@ -47,7 +47,6 @@ function searchedModals() {
   const searchedCards = document.querySelectorAll(
     "div.card:not([style='display: none;'])"
   );
-
   for (let i = 0; i < searchedCards.length; i++) {
     for (let x = 0; x < modals.length; x++) {
       if (
