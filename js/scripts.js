@@ -1,6 +1,9 @@
 let directory = null;
+
+// Set the number of employees to generate
 const directorySize = 12;
 
+// Create & append search elements
 const searchDiv = document.querySelector(".search-container");
 searchDiv.innerHTML = `
 <form action="#" method="get">
@@ -11,15 +14,22 @@ searchDiv.innerHTML = `
 const searchButton = document.querySelector("#search-submit");
 const searchInput = document.querySelector("#search-input");
 
+// Create & append gallery elements
 const galleryDiv = document.querySelector("#gallery");
 const noResults = document.createElement("h3");
 noResults.textContent = "No Search Results....";
 noResults.style.display = "none";
 
+// Create & append modal elements and hides all
 const modalContainer = document.createElement("div");
 modalContainer.classList.add("modal-container");
 modalContainer.style.display = "none";
 galleryDiv.insertAdjacentElement("afterend", modalContainer);
+
+/**
+ * Searches generated employee info cards and hides unmatched cards
+ * @param  {string} input field to preform search
+ */
 
 function searchNames(input) {
   const galleryNames = document.querySelectorAll(".card-name");
@@ -41,6 +51,11 @@ function searchNames(input) {
   }
 }
 
+/**
+ * Returns a array of modals matching the searched card
+ * @return {array} an array of searched modals
+ */
+
 function searchedModals() {
   let filteredModals = [];
   const modals = document.querySelectorAll(".modal");
@@ -60,7 +75,12 @@ function searchedModals() {
   return filteredModals;
 }
 
-// FETCH Functions
+/**
+ * Fetches data from the Random User Generator API and parses JSON
+ * @param  {API url} url
+ * @return  {data} returns parsed JSON data
+ */
+
 function fetchData(url) {
   return fetch(url)
     .then(checkStatus)
@@ -70,8 +90,10 @@ function fetchData(url) {
     );
 }
 
-//------- Helper functions ---------
-//----------------------------------
+/**
+ * Checks the status of server reply and returns a promise
+ * @param  {response}
+ */
 
 function checkStatus(response) {
   if (response.ok) {
@@ -81,7 +103,12 @@ function checkStatus(response) {
   }
 }
 
-//
+/**
+ * Takes used data from parsed JSON and returns an array of employee objects
+ * @param  {JSON} data from JSON fetch
+ * @return {array} an array of employee objects
+ */
+
 function createDirectory(data) {
   let employeeArray = [];
   data.results.forEach((employee) => {

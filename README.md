@@ -20,6 +20,12 @@ Clone project and open in any browser
 - Changed global font
 - Added box-shadows to search input, submit & cards
 
+## Tested on
+
+- Chrome
+- Safari
+- Firefox
+
 ## Authors
 
 - **Garrett Trott** - garretttrott@gmail.com
