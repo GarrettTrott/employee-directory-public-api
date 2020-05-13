@@ -30,7 +30,6 @@ galleryDiv.insertAdjacentElement("afterend", modalContainer);
  * Searches generated employee info cards and hides unmatched cards
  * @param  {string} input field to preform search
  */
-
 function searchNames(input) {
   const galleryNames = document.querySelectorAll(".card-name");
   let searchResults = [];
@@ -55,7 +54,6 @@ function searchNames(input) {
  * Returns a array of modals matching the searched card
  * @return {array} an array of searched modals
  */
-
 function searchedModals() {
   let filteredModals = [];
   const modals = document.querySelectorAll(".modal");
@@ -80,7 +78,6 @@ function searchedModals() {
  * @param  {API url} url
  * @return  {data} returns parsed JSON data
  */
-
 function fetchData(url) {
   return fetch(url)
     .then(checkStatus)
@@ -94,7 +91,6 @@ function fetchData(url) {
  * Checks the status of server reply and returns a promise
  * @param  {response}
  */
-
 function checkStatus(response) {
   if (response.ok) {
     return Promise.resolve(response);
@@ -108,7 +104,6 @@ function checkStatus(response) {
  * @param  {JSON} data from JSON fetch
  * @return {array} an array of employee objects
  */
-
 function createDirectory(data) {
   let employeeArray = [];
   data.results.forEach((employee) => {
@@ -128,7 +123,11 @@ function createDirectory(data) {
   return employeeArray;
 }
 
-//Turns API DOB string to date string *ex: "02/22/12"
+/**
+ * Reformats date of birth data
+ * @param  {date} dob date of birth data
+ * @return {date} reformated date
+ */
 function dobToDate(dob) {
   const strArray = dob.split("");
   const year = strArray.slice(0, 4).join("");
@@ -137,7 +136,11 @@ function dobToDate(dob) {
   const date = [month, "/", day, "/", year].flat().join("");
   return date;
 }
-// function that pulls 12 random US employees
+
+/**
+ * generates and appends markup for employee card gallery
+ * @param  {array} directory
+ */
 function generateGallery(directory) {
   let cards = "";
   directory.forEach((employee) => {
@@ -158,7 +161,10 @@ function generateGallery(directory) {
   galleryDiv.appendChild(noResults);
 }
 
-//function that generates modal markup
+/**
+ * generates and appends markup for employee modals
+ * @param  {array} directory
+ */
 function generateModals(directory) {
   let modals = "";
   directory.forEach((employee) => {
@@ -187,6 +193,9 @@ function generateModals(directory) {
   modalContainer.innerHTML = modals;
 }
 
+/**
+ * hides all shown modals
+ */
 function hideModals() {
   const modals = document.querySelectorAll(".modal");
   modals.forEach((modal) => {
@@ -195,6 +204,10 @@ function hideModals() {
   modalContainer.style.display = "none";
 }
 
+/**
+ * Finds the current  index of the shown modal
+ * @return returns the index of the shown modal
+ */
 function findCurrentModalIndex() {
   const filteredModals = searchedModals();
   const currentModal = document.querySelector(
@@ -212,8 +225,7 @@ fetchData(`https://randomuser.me/api/?nat=us&results=${directorySize}`)
     console.log("There was an error loading directory...", error)
   );
 
-// Event handlers //
-
+// ---- Event handlers ------ //
 searchButton.addEventListener("click", (e) => {
   searchNames(searchInput);
 });
@@ -222,7 +234,7 @@ searchInput.addEventListener("keyup", (e) => {
   searchNames(searchInput);
 });
 
-//When employee card is clicked generate modal
+// When employee card is clicked show modal
 galleryDiv.addEventListener("click", (e) => {
   const modals = document.querySelectorAll(".modal");
   const cards = document.querySelectorAll(".card");
@@ -239,6 +251,7 @@ galleryDiv.addEventListener("click", (e) => {
   }
 });
 
+// listens for event on the modal if prev, next or close is selected.
 modalContainer.addEventListener("click", (e) => {
   const filteredModals = searchedModals();
   const currentModalIndex = findCurrentModalIndex();
